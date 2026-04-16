@@ -1,0 +1,55 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: order-service
+  cloud:
+    sentinel:
+      transport:
+        # 您本地 Sentinel 控制台的地址，默认通常是 8080
+        dashboard: localhost:8080 
+        # 客户端与控制台通讯的交互端口，默认 8719，如果冲突会自动加一
+        port: 8719
+      datasource:
+        flow:          # 随便起一个数据源名称
+          nacos:
+            server-addr: localhost:8848 # Nacos 地址
+            dataId: order-service-flow-rules
+            groupId: SENTINEL_GROUP
+            data-type: json
+            rule-type: flow
+        degrade:       # 增加熔断规则数据源
+          nacos:
+            server-addr: localhost:8848
+            dataId: order-service-degrade-rules
+            groupId: SENTINEL_GROUP
+            data-type: json
+            rule-type: degrade
+        system:        # 增加系统规则数据源
+          nacos:
+            server-addr: localhost:8848
+            dataId: order-service-system-rules
+            groupId: SENTINEL_GROUP
+            data-type: json
+            rule-type: system
+        authority:     # 增加授权规则数据源
+          nacos:
+            server-addr: localhost:8848
+            dataId: order-service-authority-rules
+            groupId: SENTINEL_GROUP
+            data-type: json
+            rule-type: authority
+        param-flow:    # 增加热点参数规则数据源
+          nacos:
+            server-addr: localhost:8848
+            dataId: order-service-param-rules
+            groupId: SENTINEL_GROUP
+            data-type: json
+            rule-type: param-flow
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    openfeign:
+      circuitbreaker:
+        enabled: true
