@@ -16,13 +16,10 @@ public interface StorageMapper extends BaseMapper<Storage> {
     int decreaseStorageByProductId(@Param("productId") Long productId, @Param("count") Integer count);
 
     // ================== TCC 核心 SQL ==================
-    @Update("UPDATE t_storage SET residue = residue - #{count}, frozen = frozen + #{count} WHERE product_id = #{productId} AND residue >= #{count}")
     int updateTccTry(@Param("productId") Long productId, @Param("count") Integer count);
 
-    @Update("UPDATE t_storage SET frozen = frozen - #{count}, used = used + #{count} WHERE product_id = #{productId} AND frozen >= #{count}")
     int updateTccConfirm(@Param("productId") Long productId, @Param("count") Integer count);
 
-    @Update("UPDATE t_storage SET frozen = frozen - #{count}, residue = residue + #{count} WHERE product_id = #{productId} AND frozen >= #{count}")
     int updateTccCancel(@Param("productId") Long productId, @Param("count") Integer count);
 }
 

@@ -24,4 +24,26 @@
         residue = residue - #{count}
         where product_id = #{productId} and residue >= #{count}
     </update>
+
+    <!-- ================== TCC 核心 SQL ================== -->
+    <!-- TCC Try: 扣除可用库存，增加冻结库存 -->
+    <update id="updateTccTry">
+        UPDATE t_storage 
+        SET residue = residue - #{count}, frozen = frozen + #{count} 
+        WHERE product_id = #{productId} AND residue >= #{count}
+    </update>
+
+    <!-- TCC Confirm: 扣除冻结库存，增加已用库存 -->
+    <update id="updateTccConfirm">
+        UPDATE t_storage 
+        SET frozen = frozen - #{count}, used = used + #{count} 
+        WHERE product_id = #{productId} AND frozen >= #{count}
+    </update>
+
+    <!-- TCC Cancel: 扣除冻结库存，恢复可用库存 -->
+    <update id="updateTccCancel">
+        UPDATE t_storage 
+        SET frozen = frozen - #{count}, residue = residue + #{count} 
+        WHERE product_id = #{productId} AND frozen >= #{count}
+    </update>
 </mapper>
