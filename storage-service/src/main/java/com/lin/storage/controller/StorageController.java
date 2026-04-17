@@ -1,13 +1,16 @@
 package com.lin.storage.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.lin.storage.service.StorageService;
+import jakarta.annotation.Resource;
+import jakarta.websocket.server.PathParam;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/storage")
 public class StorageController {
+
+    @Resource
+    private StorageService storageService;
 
     @GetMapping("/deduct")
     public String deduct(@RequestParam("productId") Long productId, @RequestParam("count") Integer count) {
@@ -27,4 +30,15 @@ public class StorageController {
         System.out.println("扣减商品库存成功, productId=" + productId + ", count=" + count);
         return "扣减成功 (From Storage Service, port: 8082)";
     }
+
+
+    @PostMapping("/decrease")
+    public String decrease(@RequestParam("productId") Long productId,
+                            @RequestParam("count") Integer count) {
+
+        storageService.decrease(productId, count);
+        return "扣减成功 (From Storage Service, port: 8082)";
+    }
+
+
 }

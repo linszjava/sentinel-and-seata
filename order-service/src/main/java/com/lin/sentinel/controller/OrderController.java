@@ -2,19 +2,22 @@ package com.lin.sentinel.controller;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
+import com.lin.sentinel.entity.Order;
 import com.lin.sentinel.feign.StorageFeignClient;
+import com.lin.sentinel.service.OrderService;
+import jakarta.annotation.Resource;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/order")
 public class OrderController {
+
+    @Resource
+    private OrderService orderService;
 
     /**
      * 1. 基础流控测试
@@ -93,5 +96,24 @@ public class OrderController {
     // fallback 方法，如果上面的方法抛出异常或被降级，会进入这里兜底
     public String queryFallback(Integer id, Throwable t) {
         return "订单查询降级返回: 请求失败，原因: " + t.getMessage();
+    }
+
+    /**
+     * 测试seata
+     */
+    @PostMapping("/seata/create/order")
+    public String createOrderSeata(Order order) {
+
+        orderService.createOrder(order);
+        return "订单创建成功！"+UUID.randomUUID();
+    }
+
+    /**
+     * 测试 Seata TCC 模式
+     */
+    @PostMapping("/seata/tcc/create/order")
+    public String createOrderTcc(Order order) {
+        orderService.createOrderTcc(order);
+        return "订单创建成功！(TCC 模式) " + UUID.randomUUID();
     }
 }

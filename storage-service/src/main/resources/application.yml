@@ -8,3 +8,24 @@ spring:
     nacos:
       discovery:
         server-addr: localhost:8848
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/storage_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false
+    username: root
+    password: linsz99@
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+seata:
+  enabled: true
+  application-id: ${spring.application.name}  # 应用本身的名字
+  tx-service-group: size_tx_group # 极为重要：事务群组。此值必须与 TC Server 配置绑定对应
+  # 👇 必须加上这段映射配置 👇
+  service:
+    vgroup-mapping:
+      size_tx_group: default  # 将 size_tx_group 映射到 Seata Server 的 default 集群
+  registry:
+    type: nacos
+    nacos:
+      application: seata-server   # Seata TC 端在 Nacos 里注册的名字，默认通常写死了 seata-server
+      server-addr: 127.0.0.1:8848
+      group: SEATA_GROUP
